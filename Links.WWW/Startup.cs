@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Links.WWW.Models;
 
 namespace Links.WWW
 {
@@ -23,15 +20,11 @@ namespace Links.WWW
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
 			// In production, the Angular files will be served from this directory
 			services.AddSpaStaticFiles(configuration =>
 			{
 				configuration.RootPath = "ClientApp/dist";
 			});
-
-		    services.AddDbContext<LinksWWWContext>(options =>
-		            options.UseSqlServer(Configuration.GetConnectionString("LinksWWWContext")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

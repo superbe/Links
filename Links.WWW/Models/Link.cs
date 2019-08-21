@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Links.WWW.Models
 {
 	/// <summary>
-	/// Элемент дерева каталога.
+	/// Элемент дерева каталога (ссылка).
 	/// </summary>
+	[Serializable]
 	public class Link
 	{
 		/// <summary>
@@ -15,10 +13,22 @@ namespace Links.WWW.Models
 		/// </summary>
 		public int Id { get; set; }
 
+		internal Link Find(int id)
+		{
+			return Children.Find(id);
+		}
+
 		/// <summary>
-		/// Родительская ссылка.
+		/// Родительский идентификатор.
 		/// </summary>
 		public int ParentId { get; set; }
+
+		internal int GetMaxId()
+		{
+			if (Children.Count == 0) return Id;
+			int id = Children.GetMaxId();
+			return id > Id ? id : Id;
+		}
 
 		/// <summary>
 		/// Наименование ссылки.
@@ -33,6 +43,11 @@ namespace Links.WWW.Models
 		/// <summary>
 		/// Дочерние элементы.
 		/// </summary>
-		public Link[] Children { get; set; }
+		public LinkList Children { get; set; }
+
+		public Link()
+		{
+			Children = new LinkList();
+		}
 	}
 }

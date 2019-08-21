@@ -1,125 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Links.WWW.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Links.WWW.Models;
+using System.Collections.Generic;
 
 namespace Links.WWW.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LinksController : ControllerBase
-    {
-        private readonly LinksWWWContext _context;
+	[Route("api/[controller]")]
+	[ApiController]
+	public class LinksController : ControllerBase
+	{
+		private readonly LinksContext _context;
 
-        public LinksController(LinksWWWContext context)
-        {
-            _context = context;
-        }
+		public LinksController()
+		{
+			_context = new LinksContext();
+		}
 
-        // GET: api/Links
-        [HttpGet]
-        public IEnumerable<Link> GetLink()
-        {
-            return _context.Link;
-        }
+		// GET: api/Links
+		[HttpGet]
+		public IEnumerable<Link> GetLink()
+		{
+			return _context.Link;
+		}
 
-        // GET: api/Links/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetLink([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		// GET: api/Links/5
+		[HttpGet("{id}")]
+		public ActionResult GetLink([FromRoute] int id)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-            var link = await _context.Link.FindAsync(id);
+			var link = _context.Link.Find(id);
 
-            if (link == null)
-            {
-                return NotFound();
-            }
+			if (link == null)
+			{
+				return NotFound();
+			}
 
-            return Ok(link);
-        }
+			return Ok(link);
+		}
 
-        // PUT: api/Links/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLink([FromRoute] int id, [FromBody] Link link)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		// PUT: api/Links/5
+		[HttpPut("{id}")]
+		public ActionResult PutLink([FromRoute] int id, [FromBody] Link link)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-            if (id != link.Id)
-            {
-                return BadRequest();
-            }
+			if (id != link.Id)
+			{
+				return BadRequest();
+			}
 
-            _context.Entry(link).State = EntityState.Modified;
+			_context.Entry(link);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LinkExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+			try
+			{
+				_context.SaveChanges();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!LinkExists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
 
-            return NoContent();
-        }
+			return NoContent();
+		}
 
-        // POST: api/Links
-        [HttpPost]
-        public async Task<IActionResult> PostLink([FromBody] Link link)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		// POST: api/Links
+		[HttpPost]
+		public ActionResult PostLink([FromBody] Link link)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-            _context.Link.Add(link);
-            await _context.SaveChangesAsync();
+			_context.Add(link);
+			_context.SaveChanges();
 
-            return CreatedAtAction("GetLink", new { id = link.Id }, link);
-        }
+			return CreatedAtAction("GetLink", new { id = link.Id }, link);
+		}
 
-        // DELETE: api/Links/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLink([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		// DELETE: api/Links/5
+		[HttpDelete("{id}")]
+		public ActionResult DeleteLink([FromRoute] int id)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-            var link = await _context.Link.FindAsync(id);
-            if (link == null)
-            {
-                return NotFound();
-            }
+			Link link = _context.Link.Find(id);
+			if (link == null)
+			{
+				return NotFound();
+			}
 
-            _context.Link.Remove(link);
-            await _context.SaveChangesAsync();
+			_context.Remove(link);
+			_context.SaveChanges();
 
-            return Ok(link);
-        }
+			return Ok(link);
+		}
 
-        private bool LinkExists(int id)
-        {
-            return _context.Link.Any(e => e.Id == id);
-        }
-    }
+		private bool LinkExists(int id)
+		{
+			return _context.Link.Find(id) != null;
+		}
+	}
 }
